@@ -2,8 +2,21 @@
 <html>
 <head>
 	<title>Fishr</title>
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+    <script src="/bower_components/angular/angular.min.js"></script>
+<!--     <script src="/bower_components/angular-route/angular-route.min.js"></script> -->
+	<script src="/bower_components/angular-route/angular-route.js"></script>
+	<script src="/js/client.js"></script>
 </head>
-<body>
-	<h1>Hello World</h1>
+<body ng-app="fishrApp">
+	<header>
+		<h1>Hello World</h1>
+	</header>
+	<main>
+		<ng-view></ng-view>
+	</main>
+	<footer>
+		<h6>A footer</h6>
+	</footer>
 </body>
 </html>
