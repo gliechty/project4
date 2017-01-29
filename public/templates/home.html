@@ -16,6 +16,12 @@
         var map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 39.758093, lng: -105.007663},
           zoom: 14,
+          panControl: true, //enable pan Control
+          zoomControl: true, //enable zoom control
+          zoomControlOptions: {
+          style: google.maps.ZoomControlStyle.SMALL //zoom control size
+        },
+          scaleControl: true,
           mapTypeId: 'terrain'
         });
 
@@ -86,10 +92,9 @@
           map: map,
           draggable: true,
           animation: google.maps.Animation.DROP,
-
-          // added this to test
           clickable: true
         });
+        
         // markers.push(marker);
         marker.info = new google.maps.InfoWindow({
 		  content: "test"

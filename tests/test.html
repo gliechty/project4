@@ -1,113 +1,84 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Remove Markers</title>
-    <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 70%;
-        width: 50%;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      #floating-panel {
-        position: absolute;
-        top: 10px;
-        left: 25%;
-        z-index: 5;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #999;
-        text-align: center;
-        font-family: 'Roboto','sans-serif';
-        line-height: 30px;
-        padding-left: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="floating-panel">
-      <input onclick="clearMarkers();" type=button value="Hide Markers">
-      <input onclick="showMarkers();" type=button value="Show All Markers">
-    </div>
-      <div id="map"></div>
-      <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-    <script>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNpsXKkrBCO49SGbKNyIRyJxBd3NbGFiI&sensor=false"></script>
 
-      // In the following example, markers appear when the user clicks on the map.
-      // The markers are stored in an array.
-      // The user can then click an option to hide, show or delete the markers.
-      var map;
-      var markers = [];
-
-      function initMap() {
-        var Denver = {lat: 39.739, lng: -104.990};
-
-        map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 12,
-          center: Denver,
-          mapTypeId: 'terrain'
-        });
-
-        // This event listener will call addMarker() when the map is clicked.
-        map.addListener('click', function(event) {
-          addMarker(event.latLng);
-        });
-      }
-
-      // Adds a marker to the map and push to the array.
-      function addMarker(location) {
+<script type="text/javascript">
+    $(document).ready(function() {
+    var mapCenter = new google.maps.LatLng(47.6145, -122.3418); //Google map Coordinates
+    var map;
+    map_initialize(); // load map
+    function map_initialize(){
+        
+        //Google map option
+        var googleMapOptions = 
+        { 
+            center: mapCenter, // map center
+            zoom: 17, //zoom level, 0 = earth view to higher value
+            panControl: true, //enable pan Control
+            zoomControl: true, //enable zoom control
+            zoomControlOptions: {
+            style: google.maps.ZoomControlStyle.SMALL //zoom control size
+        },
+            scaleControl: true, // enable scale control
+            mapTypeId: google.maps.MapTypeId.ROADMAP // google map type
+        };
+        
+        map = new google.maps.Map(document.getElementById("google_map"), googleMapOptions);
+    
+        //##### drop a new marker on right click ######
+        google.maps.event.addListener(map, 'click', function(event) {
         var marker = new google.maps.Marker({
-          position: location,
-          map: map,
-          draggable: true,
-          animation: google.maps.Animation.DROP
+            position: event.latLng, //map Coordinates where user right clicked
+            map: map,
+            draggable:true, //set marker draggable 
+            animation: google.maps.Animation.DROP, //bounce animation
+            title:"Hello World!"
         });
-        markers.push(marker);
-      }
-      ////////////////
-      // TEST !!!!!!!!
-      // //////////////
-      function deleteMarker(location){
-        for (i=0; i<markers.length; i++){
-          if (location == marker[i].location){
-            markers.splice(i, 0);
-          }
-        }
-      }
+        //Content structure of info Window for the Markers
+        var contentString = $('<div class="marker-info-win">'+
+        '<div class="marker-inner-win"><span class="info-content">'+
+        '<h1 class="marker-heading">New Marker</h1>'+
+        'This is a new marker infoWindow'+ 
+        '</span>'+
+        '<br /><button name="remove-marker" class="remove-marker" title="Remove Marker">Remove Marker</button></div></div>');
+            
+            
+        //Create an infoWindow
+        var infowindow = new google.maps.InfoWindow();
+        
+        //set the content of infoWindow
+        infowindow.setContent(contentString[0]);
+        
+        //add click event listener to marker which will open infoWindow          
+        google.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(map,marker); // click on marker opens info window 
+        });
 
+        var removeBtn   = contentString.find('button.remove-marker')[0];
+        google.maps.event.addDomListener(removeBtn, "click", function(event) {
+            marker.setMap(null);
+        });
 
-      ////////////
-      // Sets the map on all markers in the array.
-      function setMapOnAll(map) {
-        for (var i = 0; i < markers.length; i++) {
-          markers[i].setMap(map);
-        }
-      }
+    });   
+    }
+});
+    
+</script>
 
-      // Removes the markers from the map, but keeps them in the array.
-      function clearMarkers() {
-        setMapOnAll(null);
-      }
+<style type="text/css">
+    #google_map {width: 90%; height: 500px;margin-top:0px;margin-left:auto;margin-right:auto;}
+    h1.heading{text-align:center;font: 18px Georgia, "Times New Roman", Times, serif;}
+</style>
 
-      // Shows any markers currently in the array.
-      function showMarkers() {
-        setMapOnAll(map);
-      }
+</head>
+<body>
 
-      // Deletes all markers in the array by removing references to them.
-      function deleteMarkers() {
-        clearMarkers();
-        markers = [];
-      }
-    </script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNpsXKkrBCO49SGbKNyIRyJxBd3NbGFiI&callback=initMap&library=places">
-    </script>
-  </body>
+    <h1 class="heading">My Google Map</h1>
+    <div align="center">Right Click to Drop a New Marker</div>
+    <div id="google_map"></div>
+
+</body>
 </html>
